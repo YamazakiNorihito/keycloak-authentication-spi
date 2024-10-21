@@ -1,3 +1,7 @@
+# 概要
+
+このプロジェクトは、Keycloak の [Authenticator SPI](https://www.keycloak.org/docs/26.0.0/server_development/#_auth_spi) を使用して、ユーザーが「母親の旧姓は何ですか？」のような秘密の質問に対する回答を入力することを要求する認証機能を実装しています。この機能は、Keycloak の公式ドキュメントにある Authenticator SPI walkthrough で紹介された例に基づいています。
+
 ## 開発環境構築
 
 1. Authentication SPI の開発 dev container を使って開発をします。
@@ -79,3 +83,95 @@ Keycloak への Auth SPI のデプロイ手順は次の通りです：
 
    1. 初めてのログイン時には `Setup Secret Question` で `What is your mom's first name?` の回答を設定します。
    2. 2 回目以降は 6-1 で設定した回答をしないとログインできません。
+
+---
+
+# Note
+
+This README is translated using automated translation.
+
+# Overview
+
+This project implements an authentication feature using Keycloak's [Authenticator SPI](https://www.keycloak.org/docs/26.0.0/server_development/#_auth_spi), requiring users to answer a secret question, such as "What is your mother's maiden name?". This functionality is based on the example introduced in the Authenticator SPI walkthrough in Keycloak's official documentation.
+
+## Development Environment Setup
+
+1. Development is done using the Authentication SPI dev container.
+2. Keycloak is started using Docker.
+
+```bash
+mvn archetype:generate -DgroupId=com.example.keycloak -DartifactId=my-auth-spi -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+```
+
+## Java Version
+
+Java 17 is used for this project to support Keycloak v22.
+
+- As of [Keycloak 21.0.0](https://www.keycloak.org/docs/21.1.2/release_notes/#keycloak-21-0-0), Java 8, Java 11, and Java 17 are supported, with Java 8 being deprecated.
+- In [Keycloak 22.0.0](https://www.keycloak.org/docs/latest/release_notes/index.html#keycloak-22-0-0), support for Java 11 was removed.
+- [Keycloak 26.0.0](https://www.keycloak.org/docs/latest/release_notes/index.html#keycloak-26-0-0) supports Java 8 and Java 17.
+
+## References
+
+- <https://github.dev/keycloak/keycloak/tree/main/server-spi/src/main/java/org/keycloak/models>
+- <https://github.com/istvano/keycloak-example-spi/blob/main/authenticator-jar/src/main/java/org/keycloak/examples/authenticator/SecretQuestionCredentialProvider.java>
+- <https://github.com/keycloak/keycloak-quickstarts/blob/release/22.0/pom.xml>
+- <https://www.keycloak.org/docs/latest/server_development/#_themes>
+
+## Deployment
+
+To deploy the Auth SPI to Keycloak, follow these steps:
+
+1. **Build the JAR file**
+
+   1. Move to `my-auth-spi` in the dev container and build it.
+
+      ```bash
+      mvn clean package
+      ```
+
+2. **Start Keycloak Docker**
+
+   1. On the host machine (separate from the VSCode dev container), move to the `docker` directory and start Docker Compose.
+
+      ```bash
+      docker compose -f compose.yml up --build
+      ```
+
+3. **Start Authentication Test Application with Keycloak**
+
+   1. Use `https://www.keycloak.org/app/` or use `keycloak-client-sample`.
+   2. If using `keycloak-client-sample`:
+
+      1. Move to the `keycloak-client-sample` directory and start Docker.
+
+         ```bash
+         docker build -t flask-keycloak-app .
+         docker run -p 5151:5000 --rm flask-keycloak-app
+         ```
+
+4. **Verify Startup**
+
+   1. Keycloak: <http://localhost:8080/>
+   2. Authentication Test Application: <http://localhost:5151/>
+
+5. **Setup**
+
+   1. Follow the instructions on this site up to `Secure the first application`:
+      - <https://www.keycloak.org/getting-started/getting-started-docker>
+   2. **Auth SPI Configuration**
+      1. Go to `Authentication` from the left menu.
+      2. **Create Browser Flow**
+         1. Duplicate the built-in `browser`.
+         2. Find `Secret Question` and add it immediately after `Username Password Form` as a step, setting `Requirement` to `Required`.
+         3. Bind the flow to the `browser flow`.
+      3. **Required Actions**
+         1. Enable `Secret Question`.
+   3. **Themes Setup**
+      1. Go to `Realm Settings` > `Themes` from the left menu.
+         1. Set Login theme to `custom`.
+
+6. **Authentication Flow**
+
+   1. During the first login, the user will be prompted to set up a secret question answer (e.g., "What is your mom's first name?").
+   2. For subsequent logins, the user must answer the question set in step 6-1 to proceed.
