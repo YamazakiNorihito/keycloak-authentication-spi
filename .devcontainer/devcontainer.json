@@ -1,0 +1,43 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/java
+{
+	"name": "Java",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/java:1-21-bullseye",
+	"features": {
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "17", //  keycloakに合わせる
+			"installMaven": "true",
+			"installGradle": "false"
+		}
+	},
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "java -version",
+	// Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			// Set *default* container specific settings.json values on container create.
+			"settings": {
+				"java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml", // Google Java Style Guide
+				"java.format.settings.profile": "GoogleStyle"
+			},
+			"extensions": [
+				"redhat.java", // Java Language Support by Red Hat
+				"vscjava.vscode-java-debug", // Java Debugger
+				"vscjava.vscode-java-test", // Java Test Runner
+				"vscjava.vscode-maven", // Maven for Java
+				"vscjava.vscode-java-dependency", // Project Manager for Java
+				"VisualStudioExptTeam.vscodeintellicode", // Visual Studio IntelliCode
+				"editorconfig.editorconfig", // EditorConfig for maintaining consistent coding styles
+				"eamodio.gitlens", // GitLens for enhanced Git support
+				"esbenp.prettier-vscode", // Prettier for code formatting
+				"redhat.vscode-xml"
+			]
+		}
+	},
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
